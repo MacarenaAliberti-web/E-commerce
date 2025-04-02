@@ -1,3 +1,4 @@
+// types
 export interface CardProps {
   id?: number;
   name: string;
@@ -10,4 +11,8 @@ export interface CardProps {
     id: number;
     name: string;
   };
+}
+
+export interface CardComponentProps {
+  producto: CardProps;
 }

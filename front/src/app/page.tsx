@@ -4,9 +4,11 @@ import { fakeProducts } from "../data/products";
 
 export default function Home() {
   return (
-    <div>
-      <h1>Bienvenidos a mi E-commerce</h1>
-      <div style={{ display: "flex", gap: "20px" }}>
+    <div className="bg-gray-800 min-h-screen p-6">
+      <h1 className="text-3xl font-bold text-center text-gray-100 mb-8">
+        Bienvenidos a mi Mundo Tecnológico
+      </h1>
+      <div className="flex flex-wrap justify-center gap-6">
         {fakeProducts.map((producto) => (
           <Card key={producto.id} producto={producto} />
         ))}

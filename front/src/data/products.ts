@@ -4,7 +4,7 @@ export const fakeProducts: CardProps[] = [
   {
     id: 1,
     name: "Auriculares",
-    description: "Descripción del producto 1",
+    description: "Auriculares Gamer Gadnic A2000 LED Compatible Pc Play Consolas",
     price: 100,
     stock: 10,
     image: "/img1.jpg",
@@ -16,8 +16,8 @@ export const fakeProducts: CardProps[] = [
   },
   {
     id: 2,
-    name: "Producto 2",
-    description: "Descripción del producto 2",
+    name: "Auriculares",
+    description: "Auriculares Gamer Gadnic A2000 LED Compatible Pc Play Consolas",
     price: 200,
     stock: 5,
     image: "/img2.jpg",
@@ -25,9 +25,9 @@ export const fakeProducts: CardProps[] = [
   },
   {
     id: 3,
-    name: "Producto 3",
-    description: "Descripción del producto 3",
-    price: 300,
+    name: "Auriculares",
+    description: "Auriculares Inalámbricos Shokz OpenFit - Negro - Garmin ",
+    price: 100,
     stock: 2,
     image: "/img3.jpg",
     categoryId: 3,
