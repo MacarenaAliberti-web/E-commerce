@@ -14,6 +14,7 @@ const images = [
   "/carousel/tech3.jpg",
   "/carousel/tech4.jpg",
   "/carousel/tech2.jpg",
+  "/carousel/tech5.png",
 ];
 
 export default function Carousel() {
