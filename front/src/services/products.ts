@@ -1,0 +1,32 @@
+import { IProduct } from "@/types/product";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+export async function getProducts() {
+    try {
+        const response = await fetch(`${apiUrl}/products`,{
+            method: 'GET',
+            
+        });
+        const products: IProduct[] = await response.json();
+        console.log(' ~ getProducts ~ products:', products)
+        return products;
+        
+} catch (error) { 
+    console.error('Error fetching products:', error);
+    throw new Error(`Error fetching products: ${error}`);
+  }
+}
+export async function getProductById(id: number) {
+    try {
+        const response = await getProducts();
+        const product = response.find((product) => product.id === id);
+        if (!product) {
+            throw new Error(`Product with id ${id} not found`);
+        }
+        return product;
+    } catch (error) {
+        throw new Error(`Error fetching product by id: ${error}`);
+    }
+}
+

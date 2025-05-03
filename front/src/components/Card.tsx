@@ -1,8 +1,12 @@
 import React from "react";
 import Image from "next/image";
-import { CardComponentProps } from "../types/card";
+import { IProduct } from "@/types/product";
 
-export const Card: React.FC<CardComponentProps> = ({ producto }) => {
+interface CardProps {
+  producto: IProduct;
+}
+
+export const Card: React.FC<CardProps> = ({ producto }) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-4 w-64 flex flex-col items-center text-center transition transform hover:scale-105 duration-300">
       <Image
@@ -24,3 +28,4 @@ export const Card: React.FC<CardComponentProps> = ({ producto }) => {
 };
 
 export default Card;
+

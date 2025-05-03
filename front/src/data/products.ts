@@ -1,6 +1,6 @@
-import { CardProps } from "../types/card";
+import { IProduct } from "../types/product";
 
-export const fakeProducts: CardProps[] = [
+export const fakeProducts: IProduct[] = [
   {
     id: 1,
     name: "Tablet",

@@ -1,5 +1,4 @@
-// types card.ts
-export interface CardProps {
+export interface IProduct {
   id?: number;
   name: string;
   description: string;
@@ -14,5 +13,6 @@ export interface CardProps {
 }
 
 export interface CardComponentProps {
-  producto: CardProps;
+  producto: IProduct;
 }
+
