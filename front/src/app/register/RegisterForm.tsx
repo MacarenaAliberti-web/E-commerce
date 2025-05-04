@@ -5,13 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
-
-interface RegisterFormInputs {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
+import { registerUser } from "@/services/auth";
+import { RegisterUserType } from "@/types/user";  // Importamos la interfaz User
+import { toast } from "react-hot-toast";  // Asegúrate de que Toaster esté en layout.tsx
 
 export function RegisterForm() {
   const {
@@ -20,16 +16,26 @@ export function RegisterForm() {
     reset,
     watch,
     formState: { errors, isValid },
-  } = useForm<RegisterFormInputs>({
+  } = useForm<RegisterUserType>({  // Usamos la interfaz User aquí
     mode: "onChange",
   });
 
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const onSubmit = (data: RegisterFormInputs) => {
-    console.log("Submit exitoso", data);
-    setSuccessMessage("¡Registro enviado correctamente!");
-    reset();
+  const onSubmit = async (data: RegisterUserType) => {  // Usamos User aquí también
+    try {
+      await registerUser(data);  // Ahora pasamos el objeto User directamente
+
+      setSuccessMessage("¡Registro enviado correctamente!");
+      toast.success("¡Registro exitoso!");  // Mostramos alerta de éxito
+      reset();
+      setErrorMessage("");
+    } catch {
+      setErrorMessage("Hubo un error al registrar el usuario.");
+      toast.error("Hubo un error al registrar el usuario.");  // Mostramos alerta de error
+      setSuccessMessage("");
+    }
   };
 
   const password = watch("password");
@@ -146,6 +152,50 @@ export function RegisterForm() {
         )}
       </div>
 
+      {/* Dirección */}
+      <div className="space-y-1">
+        <Label htmlFor="address">Dirección</Label>
+        <Controller
+          name="address"
+          control={control}
+          defaultValue=""
+          rules={{ required: "La dirección es obligatoria" }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              id="address"
+              placeholder="Ingrese su dirección"
+              className={errors.address ? "border-red-500" : ""}
+            />
+          )}
+        />
+        {errors.address && (
+          <p className="text-red-500 text-xs">{errors.address.message}</p>
+        )}
+      </div>
+
+      {/* Teléfono */}
+      <div className="space-y-1">
+        <Label htmlFor="phone">Teléfono</Label>
+        <Controller
+          name="phone"
+          control={control}
+          defaultValue=""
+          rules={{ required: "El teléfono es obligatorio" }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              id="phone"
+              placeholder="Ingrese su teléfono"
+              className={errors.phone ? "border-red-500" : ""}
+            />
+          )}
+        />
+        {errors.phone && (
+          <p className="text-red-500 text-xs">{errors.phone.message}</p>
+        )}
+      </div>
+
       <Button
         type="submit"
         className="w-full"
@@ -156,6 +206,9 @@ export function RegisterForm() {
 
       {successMessage && (
         <p className="text-green-600 text-center text-sm mt-4">{successMessage}</p>
+      )}
+      {errorMessage && (
+        <p className="text-red-600 text-center text-sm mt-4">{errorMessage}</p>
       )}
     </form>
   );

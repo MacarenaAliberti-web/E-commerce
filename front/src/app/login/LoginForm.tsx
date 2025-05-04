@@ -5,30 +5,36 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
-
-interface LoginFormInputs {
-  email: string;
-  password: string;
-}
+import { loginUser } from "@/services/auth"; // 👉 función que hace la petición al backend
+import { toast } from "react-hot-toast"; // 👉 para mostrar notificaciones
+import { FormDataLoginType } from "@/types/user"; // 👉 tipado del formulario
 
 export function LoginForm() {
   const {
     control,
     handleSubmit,
-    reset, // 🔥 Método para resetear el formulario
+    reset,
     formState: { errors, isValid },
-  } = useForm<LoginFormInputs>({
-    mode: "onChange", // Validaciones en tiempo real
+  } = useForm<FormDataLoginType>({
+    mode: "onChange",
   });
 
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const onSubmit = (data: LoginFormInputs) => {
-    console.log(data);
-    setSuccessMessage("¡Login enviado correctamente!");
-    
-    // Reseteamos el formulario después de un envío exitoso
-    reset(); // Esto borra los campos
+  const onSubmit = async (data: FormDataLoginType) => {
+    try {
+      await loginUser(data);
+
+      setSuccessMessage("¡Inicio de sesión exitoso!");
+      toast.success("¡Bienvenido de nuevo!");
+      reset();
+      setErrorMessage("");
+    } catch {
+      setErrorMessage("Credenciales incorrectas o error del servidor.");
+      toast.error("Error al iniciar sesión");
+      setSuccessMessage("");
+    }
   };
 
   return (
@@ -65,7 +71,7 @@ export function LoginForm() {
         )}
       </div>
 
-      {/* Password */}
+      {/* Contraseña */}
       <div className="space-y-1">
         <Label htmlFor="password">Contraseña</Label>
         <Controller
@@ -94,20 +100,20 @@ export function LoginForm() {
         )}
       </div>
 
-      {/* Botón */}
       <Button
         type="submit"
         className="w-full"
-        disabled={!isValid} // Bloqueamos el botón hasta que todo sea válido
+        disabled={!isValid}
       >
         Iniciar Sesión
       </Button>
 
-      {/* Mensaje de éxito */}
       {successMessage && (
         <p className="text-green-600 text-center text-sm mt-4">{successMessage}</p>
+      )}
+      {errorMessage && (
+        <p className="text-red-600 text-center text-sm mt-4">{errorMessage}</p>
       )}
     </form>
   );
 }
-

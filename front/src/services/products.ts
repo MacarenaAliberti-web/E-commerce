@@ -1,6 +1,5 @@
+import { apiUrl } from "@/config/apiURL";
 import { IProduct } from "@/types/product";
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getProducts() {
     try {
