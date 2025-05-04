@@ -3,10 +3,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaUser, FaShoppingCart } from "react-icons/fa";
+import { useAuthStore } from "@/store";
 
 export default function Navbar() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
+  const { token, logout } = useAuthStore();
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,20 +37,40 @@ export default function Navbar() {
         </form>
 
         {/* Links */}
-        <div className="flex flex-wrap justify-center md:justify-end items-center gap-4 text-sm">
-          <Link href="/register" className="hover:text-gray-300">
-            Creá tu cuenta
-          </Link>
-          <Link href="/login" className="hover:text-gray-300 flex items-center gap-1">
-            <FaUser />
-            Ingresá
-          </Link>
-          <Link href="/orders" className="hover:text-gray-300">
-            Mis compras
-          </Link>
-          <Link href="/cart" className="hover:text-gray-300 text-lg">
-            <FaShoppingCart />
-          </Link>
+        <div className="flex items-center gap-4 text-sm">
+          {!token ? (
+            <>
+              <Link href="/register" className="hover:text-gray-300">
+                Creá tu cuenta
+              </Link>
+              <Link href="/login" className="hover:text-gray-300 flex items-center gap-1">
+                <FaUser />
+                Ingresá
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/dashboard" className="hover:text-gray-300">
+                Mi Cuenta
+              </Link>
+              <button
+                onClick={() => {
+                  logout();
+                  router.push("/");
+                }}
+                className="hover:text-gray-300"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          )}
+          {token && (
+            <>
+              <Link href="/cart" className="hover:text-gray-300 text-lg">
+                <FaShoppingCart />
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
