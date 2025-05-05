@@ -1,6 +1,7 @@
 import { apiUrl } from "@/config/apiURL";
 import { RegisterUserType, FormDataLoginType } from "@/types/user";
-import { useAuthStore } from "@/store"; // ✅ Importar store
+import { useAuthStore } from "@/store/index"; 
+
 
 // 👉 Registro de usuario
 export async function registerUser(userData: RegisterUserType) {
