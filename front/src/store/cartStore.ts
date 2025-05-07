@@ -1,4 +1,4 @@
-// cartStore.ts
+// store/cartStore.ts
 import { create } from 'zustand';
 import { IProduct } from '@/types/product';
 import { persist } from 'zustand/middleware';
@@ -10,6 +10,9 @@ interface CartItem extends IProduct {
 interface CartState {
   cart: CartItem[];
   addToCart: (product: IProduct) => void;
+  removeFromCart: (id: number) => void;
+  incrementQuantity: (id: number) => void;
+  decrementQuantity: (id: number) => void;
   clearCart: () => void;
 }
 
@@ -35,10 +38,32 @@ export const useCartStore = create<CartState>()(
         }
       },
 
+      removeFromCart: (id) => {
+        set({
+          cart: get().cart.filter(item => item.id !== id),
+        });
+      },
+
+      incrementQuantity: (id) => {
+        set({
+          cart: get().cart.map(item =>
+            item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+          ),
+        });
+      },
+
+      decrementQuantity: (id) => {
+        set({
+          cart: get().cart
+            .map(item =>
+              item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+            )
+            .filter(item => item.quantity > 0),
+        });
+      },
+
       clearCart: () => set({ cart: [] }),
     }),
-    {
-      name: 'cart-storage', // clave de localStorage
-    }
+    { name: 'cart-storage' }
   )
 );
