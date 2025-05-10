@@ -1,33 +1,28 @@
-"use client";
+"use client"
 
-import React, { useEffect, useState } from "react";
-import store from "@/store/index";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react"
+import store from "@/store/index"
+import { useRouter } from "next/navigation"
 
 export default function Dashboard() {
-  const { userData, logout, setUserData } = store();
-  const token = userData?.token;
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const { userData, logout } = store()
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!token) {
-      router.push("/login");
+    if (!userData?.token) {
+      router.push("/login")
     } else {
-      const user = localStorage.getItem("user");
-      if (user) {
-        setUserData(JSON.parse(user));
-      }
-      setLoading(false);
+      setLoading(false)
     }
-  }, [token, router, setUserData]);
+  }, [userData?.token, router])
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-800">
         <h1 className="text-2xl font-bold text-white">Cargando...</h1>
       </div>
-    );
+    )
   }
 
   if (!userData) {
@@ -37,7 +32,7 @@ export default function Dashboard() {
           No se encontraron datos del usuario.
         </h1>
       </div>
-    );
+    )
   }
 
   return (
@@ -69,8 +64,8 @@ export default function Dashboard() {
       <div className="mt-8 flex gap-4">
         <button
           onClick={() => {
-            logout();
-            router.push("/");
+            logout()
+            router.push("/")
           }}
           className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-md shadow-md"
         >
@@ -78,5 +73,5 @@ export default function Dashboard() {
         </button>
       </div>
     </div>
-  );
+  )
 }

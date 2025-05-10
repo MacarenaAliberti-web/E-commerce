@@ -1,7 +1,7 @@
+// store/index.ts
 import { IProduct } from '@/types/product'
 import { create } from 'zustand'
 import { persist, devtools, createJSONStorage } from 'zustand/middleware'
-
 
 interface ICredential {
   id: number
@@ -17,7 +17,6 @@ interface IUser {
   role: string
   credential: ICredential
   orders: number[]
-  
 }
 
 interface IUserData {
@@ -25,10 +24,10 @@ interface IUserData {
   user: IUser
   token: string
 }
+
 interface IStoreState {
   userData: IUserData | null
   cart: IProduct[]
-  
 
   setUserData: (userData: IUserData | null) => void
   setCart: (data: IProduct[]) => void
@@ -49,23 +48,21 @@ const store = create<IStoreState>()(
         setUserData: (userData: IUserData | null) => set({ userData }),
         setCart: (data) => set({ cart: data }),
 
-        login: (userData: IUserData) => {
-          set({ userData })
-        },
+        login: (userData: IUserData) => set({ userData }),
+        logout: () => set({ userData: null, cart: [] }),
 
-        logout: () => {
-          set({ userData: null, cart: [] })
-        },
-
-        isAuthenticated: () => !!get().userData?.login
+        isAuthenticated: () => !!get().userData?.login,
       }),
       {
         name: "userDataEcommerce",
-        storage: createJSONStorage(() => localStorage),
+        storage:
+          typeof window !== "undefined"
+            ? createJSONStorage(() => localStorage)
+            : undefined, // <- evita error en SSR
       }
     )
   )
 )
 
-export default store;
+export default store
 

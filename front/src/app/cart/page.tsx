@@ -6,19 +6,14 @@ import Image from "next/image";
 import { FaShoppingCart } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import store from "@/store/index";
-import { IProduct } from "@/types/product";
 
 
 export default function Cart() {
   const router = useRouter();
-  const { userData} = store();
+  const { userData, cart, setCart } = store(); // ✅ usamos cart desde Zustand
   const token = userData?.token;
 
-const [cartItems, setCartItems] = useState <IProduct[]>([]);
-
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [counter, setCounter] = useState(0);
-
 
   useEffect(() => {
     if (!token) {
@@ -31,31 +26,15 @@ const [cartItems, setCartItems] = useState <IProduct[]>([]);
     }
   }, [token, router]);
 
-
-
-  const handleQuantityChange = (quantity:number) => {
-    setCounter(counter + quantity);
-  }
-    
-
   const handleRemove = (id: number) => {
-    const updated = cartItems.filter((item) => item.id !== id);
-    setCartItems(updated);
-    
+    const updated = cart.filter((item) => item.id !== id);
+    setCart(updated);
   };
 
   const handleCheckout = async () => {
     try {
-      const getArrayProducts =(): number[]=>{
-    const tmp:number[]=[];
-    cartItems.forEach(element => {
-      tmp.push(element.id? element.id:0);
-      
-    });
-    return tmp;
-}
-const products = getArrayProducts();
-const userId = userData?.user.id;
+      const products = cart.map((item) => item.id ?? 0);
+      const userId = userData?.user.id;
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         method: "POST",
@@ -73,8 +52,7 @@ const userId = userData?.user.id;
       }
 
       toast.success("Compra realizada con éxito");
-     
-      setCartItems([]);
+      setCart([]);
     } catch (error) {
       toast.error("Hubo un problema al finalizar la compra");
       console.error(error);
@@ -89,14 +67,14 @@ const userId = userData?.user.id;
     );
   }
 
-const cartLength = cartItems.length;
+  const cartLength = cart.length;
 
   return (
     <div className="min-h-screen bg-gray-800 text-white py-12">
       <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-4xl font-bold text-center mb-8">Carrito de Compras</h1>
 
-        {cartItems.length === 0 ? (
+        {cartLength === 0 ? (
           <div className="text-center">
             <FaShoppingCart className="text-6xl text-gray-500 mb-4" />
             <p className="text-lg text-gray-400">Tu carrito está vacío.</p>
@@ -104,7 +82,7 @@ const cartLength = cartItems.length;
         ) : (
           <>
             <div className="space-y-4">
-              {cartItems.map((item) => (
+              {cart.map((item) => (
                 <div key={item.id} className="flex items-center justify-between bg-gray-700 p-4 rounded-md">
                   <div className="flex items-center">
                     <Image
@@ -117,21 +95,6 @@ const cartLength = cartItems.length;
                     <div>
                       <h2 className="text-lg font-semibold">{item.name}</h2>
                       <p className="text-sm text-gray-400">Precio: ${item.price}</p>
-                      <div className="flex items-center space-x-2 mt-2">
-                        <button
-                          onClick={() => handleQuantityChange(-1)}
-                          className="bg-gray-600 px-2 py-1 rounded text-white hover:bg-gray-500"
-                        >
-                          -
-                        </button>
-                        <span className="text-sm">{cartLength}</span>
-                        <button
-                          onClick={() => handleQuantityChange(1)}
-                          className="bg-gray-600 px-2 py-1 rounded text-white hover:bg-gray-500"
-                        >
-                          +
-                        </button>
-                      </div>
                     </div>
                   </div>
                   <button
@@ -147,14 +110,12 @@ const cartLength = cartItems.length;
             <div className="flex flex-col items-center justify-center text-center mt-12">
               <p className="text-lg font-semibold">
                 Total de productos:{" "}
-                <span className="text-white">
-                  {cartItems.length} 
-                </span>
+                <span className="text-white">{cartLength}</span>
               </p>
               <p className="text-lg font-semibold mt-2">
                 Total a pagar:{" "}
                 <span className="text-white">
-                  ${cartItems.reduce((acc, item) => acc + item.price * cartLength, 0).toFixed(2)}
+                  ${cart.reduce((acc, item) => acc + item.price, 0).toFixed(2)}
                 </span>
               </p>
 

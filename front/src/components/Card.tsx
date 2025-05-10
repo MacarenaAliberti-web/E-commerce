@@ -1,36 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { IProduct } from "@/types/product";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import store from "@/store/index";
 
-
 interface CardProps {
   producto: IProduct;
 }
 
 export const Card: React.FC<CardProps> = ({ producto }) => {
-
-   const [cartItems, setCartItems] = useState <IProduct[]>([]);
-  
-  const { userData, cart} = store();
-    const token = userData?.token;
+  const { userData, cart, setCart } = store(); // ✅ usamos setCart del store
+  const token = userData?.token;
   const router = useRouter();
-
-const addProduct = (product: IProduct): boolean => {
-    const exists = cart.find(p => p.id === product.id);
-    if (exists) return false;
-
-    const updatedCart = [...cart, product];
-    setCartItems(updatedCart);
-
-const userId = userData?.user.id;
-
-    localStorage.setItem(`cart_${userId}`, JSON.stringify(updatedCart));
-    return true;
-  };
 
   const handleAddToCart = () => {
     if (!token) {
@@ -41,14 +24,18 @@ const userId = userData?.user.id;
       return;
     }
 
-    addProduct(producto);
+    const exists = cart.find((p) => p.id === producto.id);
+    if (exists) {
+      toast.error("Este producto ya está en el carrito");
+      return;
+    }
+
+    setCart([...cart, producto]); // ✅ actualizamos el carrito global Zustand
     toast.success("Producto agregado al carrito");
   };
 
   return (
     <div className="bg-white rounded-xl shadow-md p-4 w-72 h-[460px] flex flex-col justify-between items-center text-center transition transform hover:scale-105 duration-300">
-      <p>TENES PRODUCTOS{cartItems.length}</p>
-      
       <Image
         src={producto.image}
         alt={producto.name}
@@ -71,3 +58,4 @@ const userId = userData?.user.id;
 };
 
 export default Card;
+

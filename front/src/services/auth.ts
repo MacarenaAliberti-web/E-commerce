@@ -1,13 +1,11 @@
 
 import { apiUrl } from "@/config/apiURL";
 import { RegisterUserType, FormDataLoginType } from "@/types/user";
-
-
+import store from "@/store"; // ✅ importamos el store para usar setUserData
 
 // 👉 Registro de usuario
 export async function registerUser(userData: RegisterUserType) {
-  
-  const {  email, password, name, address, phone } = userData;
+  const { email, password, name, address, phone } = userData;
 
   try {
     const response = await fetch(`${apiUrl}/users/register`, {
@@ -45,14 +43,13 @@ export async function loginUser(credentials: FormDataLoginType) {
     }
 
     const data = await response.json();
-const token = data.token;
-    // Guardar token en localStorage y store
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
 
-    // ✅ Actualizar estado global (Zustand)
-    const { setToken } = token;
-    setToken(data.token);
+    // ✅ Actualizar Zustand store con token y user
+    store.getState().setUserData({
+      login: true,
+      token: data.token,
+      user: data.user,
+    });
 
     return data;
   } catch (error) {

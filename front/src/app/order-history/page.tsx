@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import store from "@/store/index";
+import store from "@/store";
 import { getOrdersByUser } from "@/services/orderServices";
 import { IProduct } from "@/types/product";
 
@@ -12,10 +12,15 @@ interface IOrder {
   total: number;
 }
 
-export const OrderHistory = () => {
+const OrderHistory = () => {
   const { userData, isAuthenticated } = store();
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);  // Estado para asegurar que el componente solo se renderice en el cliente
+
+  useEffect(() => {
+    setIsClient(true);  // Aseguramos que el cliente ha sido montado
+  }, []);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -34,8 +39,14 @@ export const OrderHistory = () => {
       setLoading(false);
     };
 
-    fetchOrders();
-  }, [userData]);
+    if (isClient) {  // Solo se ejecuta cuando el cliente está disponible
+      fetchOrders();
+    }
+  }, [userData, isClient]);
+
+  if (!isClient) {
+    return null;  // No se renderiza nada en el servidor
+  }
 
   if (!isAuthenticated()) {
     return <p className="text-center text-red-500">No estás logueado.</p>;
@@ -59,12 +70,18 @@ export const OrderHistory = () => {
 
       {orders.map((order) => (
         <div key={order.id} className="border rounded-lg p-4 shadow-md">
-          <p className="text-sm text-gray-500">Fecha: {new Date(order.date).toLocaleDateString()}</p>
+          <p className="text-sm text-gray-500">
+            Fecha: {new Date(order.date).toLocaleDateString()}
+          </p>
 
           <div className="mt-2 space-y-2">
             {order.products.map((product: IProduct) => (
               <div key={product.id} className="flex items-center space-x-4 border p-2 rounded">
-                <img src={product.image} alt={product.name} className="w-16 h-16 object-contain" />
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-16 h-16 object-contain"
+                />
                 <div>
                   <p className="font-medium">{product.name}</p>
                   <p className="text-sm text-gray-600">${product.price}</p>
@@ -72,8 +89,17 @@ export const OrderHistory = () => {
               </div>
             ))}
           </div>
+
+          {/* Asegúrate de que `order.total` no sea undefined antes de llamar a toFixed */}
+          <div className="mt-2">
+            <p className="text-lg font-semibold">
+              Total: ${order.total ? order.total.toFixed(2) : "0.00"}
+            </p>
+          </div>
         </div>
       ))}
     </div>
   );
 };
+
+export default OrderHistory;
