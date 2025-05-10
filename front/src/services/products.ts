@@ -28,4 +28,3 @@ export async function getProductById(id: number) {
         throw new Error(`Error fetching product by id: ${error}`);
     }
 }
-

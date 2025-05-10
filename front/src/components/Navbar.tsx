@@ -3,15 +3,15 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaUser, FaShoppingCart } from "react-icons/fa";
-import { useAuthStore } from "@/store";
-import { useCartStore } from "@/store/cartStore";
+import store from "@/store/index";
 
 export default function Navbar() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const { token, logout } = useAuthStore();
-  const { cart } = useCartStore();
-  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+  const { userData, logout} = store();
+  const token = userData?.token;
+  const { cart } = store();
+  
 
   // 👇 Se asegura que solo se renderice en el cliente
   const [hasMounted, setHasMounted] = useState(false);
@@ -76,11 +76,11 @@ export default function Navbar() {
               <Link href="/cart" className="hover:text-gray-300 text-lg">
                 <FaShoppingCart />
               </Link>
-              {totalItems > 0 && (
+             
                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                  {totalItems}
+                  {cart.length}
                 </span>
-              )}
+              
             </div>
           )}
         </div>

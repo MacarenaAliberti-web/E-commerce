@@ -1,21 +1,24 @@
-// src/services/orderServices.ts
-export const createOrder = async (
-  productIDs: number[],
-  userId: string,
-  token: string
-) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({
-      userId,
-      products: productIDs
-    })
-  });
+import { apiUrl } from "@/config/apiURL";
 
-  if (!res.ok) throw new Error('Error al crear la orden');
-  return await res.json();
-};
+export async function getOrdersByUser(userId: string, token: string) {
+  try {
+    const response = await fetch(`${apiUrl}/users/orders`, {
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token, 
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener el historial de compras");
+    }
+
+    const data = await response.json();
+
+    return Array.isArray(data) ? data : [data];
+  } catch (error) {
+    console.error("Error en getOrdersByUser:", error);
+    return null;
+  }
+}

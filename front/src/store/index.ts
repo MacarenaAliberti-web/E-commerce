@@ -1,19 +1,71 @@
-import { create } from 'zustand';
+import { IProduct } from '@/types/product'
+import { create } from 'zustand'
+import { persist, devtools, createJSONStorage } from 'zustand/middleware'
 
-interface AuthState {
-  token: string | null;
-  setToken: (token: string) => void;
-  logout: () => void;
+
+interface ICredential {
+  id: number
+  password: string
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
-  setToken: (token: string) => {
-    localStorage.setItem('token', token);
-    set({ token });
-  },
-  logout: () => {
-    localStorage.removeItem('token');
-    set({ token: null });
-  },
-}));
+interface IUser {
+  id: number
+  name: string
+  email: string
+  address: string
+  phone: string
+  role: string
+  credential: ICredential
+  orders: number[]
+  
+}
+
+interface IUserData {
+  login: boolean
+  user: IUser
+  token: string
+}
+interface IStoreState {
+  userData: IUserData | null
+  cart: IProduct[]
+  
+
+  setUserData: (userData: IUserData | null) => void
+  setCart: (data: IProduct[]) => void
+
+  login: (userData: IUserData) => void
+  logout: () => void
+
+  isAuthenticated: () => boolean
+}
+
+const store = create<IStoreState>()(
+  devtools(
+    persist(
+      (set, get) => ({
+        userData: null,
+        cart: [],
+
+        setUserData: (userData: IUserData | null) => set({ userData }),
+        setCart: (data) => set({ cart: data }),
+
+        login: (userData: IUserData) => {
+          set({ userData })
+        },
+
+        logout: () => {
+          set({ userData: null, cart: [] })
+        },
+
+        isAuthenticated: () => !!get().userData?.login
+      }),
+      {
+        name: "userDataEcommerce",
+        storage: createJSONStorage(() => localStorage),
+      }
+    )
+  )
+)
+
+export default store;
+

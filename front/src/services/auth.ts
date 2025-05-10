@@ -1,17 +1,21 @@
+
 import { apiUrl } from "@/config/apiURL";
 import { RegisterUserType, FormDataLoginType } from "@/types/user";
-import { useAuthStore } from "@/store/index"; 
+
 
 
 // 👉 Registro de usuario
 export async function registerUser(userData: RegisterUserType) {
+  
+  const {  email, password, name, address, phone } = userData;
+
   try {
     const response = await fetch(`${apiUrl}/users/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userData),
+      body: JSON.stringify({ email, password, name, address, phone }),
     });
 
     if (!response.ok) {
@@ -41,13 +45,13 @@ export async function loginUser(credentials: FormDataLoginType) {
     }
 
     const data = await response.json();
-
+const token = data.token;
     // Guardar token en localStorage y store
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
 
     // ✅ Actualizar estado global (Zustand)
-    const { setToken } = useAuthStore.getState();
+    const { setToken } = token;
     setToken(data.token);
 
     return data;

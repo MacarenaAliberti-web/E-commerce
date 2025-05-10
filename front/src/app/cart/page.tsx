@@ -2,24 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/index";
 import Image from "next/image";
-import { useCartStore } from "@/store/cartStore";
 import { FaShoppingCart } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import store from "@/store/index";
+import { IProduct } from "@/types/product";
+
 
 export default function Cart() {
-  const { token } = useAuthStore();
   const router = useRouter();
-  const {
-    cart,
-    removeFromCart,
-    incrementQuantity,
-    decrementQuantity,
-    clearCart,
-  } = useCartStore();
+  const { userData} = store();
+  const token = userData?.token;
+
+const [cartItems, setCartItems] = useState <IProduct[]>([]);
 
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [counter, setCounter] = useState(0);
+
 
   useEffect(() => {
     if (!token) {
@@ -32,17 +31,39 @@ export default function Cart() {
     }
   }, [token, router]);
 
+
+
+  const handleQuantityChange = (quantity:number) => {
+    setCounter(counter + quantity);
+  }
+    
+
+  const handleRemove = (id: number) => {
+    const updated = cartItems.filter((item) => item.id !== id);
+    setCartItems(updated);
+    
+  };
+
   const handleCheckout = async () => {
     try {
-      const productIds = cart.map((item) => item.id);
+      const getArrayProducts =(): number[]=>{
+    const tmp:number[]=[];
+    cartItems.forEach(element => {
+      tmp.push(element.id? element.id:0);
+      
+    });
+    return tmp;
+}
+const products = getArrayProducts();
+const userId = userData?.user.id;
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `${token}`,
         },
-        body: JSON.stringify({ products: productIds }),
+        body: JSON.stringify({ userId, products }),
       });
 
       if (!response.ok) {
@@ -52,8 +73,8 @@ export default function Cart() {
       }
 
       toast.success("Compra realizada con éxito");
-      clearCart();
-      router.push("/misCompras");
+     
+      setCartItems([]);
     } catch (error) {
       toast.error("Hubo un problema al finalizar la compra");
       console.error(error);
@@ -68,21 +89,22 @@ export default function Cart() {
     );
   }
 
+const cartLength = cartItems.length;
+
   return (
     <div className="min-h-screen bg-gray-800 text-white py-12">
       <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-4xl font-bold text-center mb-8">Carrito de Compras</h1>
 
-        {cart.length === 0 ? (
+        {cartItems.length === 0 ? (
           <div className="text-center">
             <FaShoppingCart className="text-6xl text-gray-500 mb-4" />
             <p className="text-lg text-gray-400">Tu carrito está vacío.</p>
-            <p className="text-sm text-gray-400 mt-2">Agrega productos para continuar comprando.</p>
           </div>
         ) : (
           <>
             <div className="space-y-4">
-              {cart.map((item) => (
+              {cartItems.map((item) => (
                 <div key={item.id} className="flex items-center justify-between bg-gray-700 p-4 rounded-md">
                   <div className="flex items-center">
                     <Image
@@ -97,14 +119,14 @@ export default function Cart() {
                       <p className="text-sm text-gray-400">Precio: ${item.price}</p>
                       <div className="flex items-center space-x-2 mt-2">
                         <button
-                          onClick={() => item.id !== undefined && decrementQuantity(item.id)}
+                          onClick={() => handleQuantityChange(-1)}
                           className="bg-gray-600 px-2 py-1 rounded text-white hover:bg-gray-500"
                         >
                           -
                         </button>
-                        <span className="text-sm">{item.quantity}</span>
+                        <span className="text-sm">{cartLength}</span>
                         <button
-                          onClick={() => item.id !== undefined && incrementQuantity(item.id)}
+                          onClick={() => handleQuantityChange(1)}
                           className="bg-gray-600 px-2 py-1 rounded text-white hover:bg-gray-500"
                         >
                           +
@@ -112,44 +134,37 @@ export default function Cart() {
                       </div>
                     </div>
                   </div>
-                  {item.id !== undefined && (
-                    <button
-                      onClick={() => removeFromCart(item.id!)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      Eliminar
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleRemove(item.id ?? 0)}
+                    className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-md shadow-md"
+                  >
+                    Eliminar
+                  </button>
                 </div>
               ))}
             </div>
 
-            {cart.length > 0 && (
-              <div className="mt-8 bg-gray-700 p-4 rounded-md text-right">
-                <p className="text-lg font-semibold">
-                  Total de productos:{" "}
-                  <span className="text-green-400">
-                    {cart.reduce((acc, item) => acc + item.quantity, 0)}
-                  </span>
-                </p>
-                <p className="text-lg font-semibold">
-                  Total a pagar:{" "}
-                  <span className="text-green-400">
-                    $
-                    {cart
-                      .reduce((acc, item) => acc + item.price * item.quantity, 0)
-                      .toFixed(2)}
-                  </span>
-                </p>
-              </div>
-            )}
+            <div className="flex flex-col items-center justify-center text-center mt-12">
+              <p className="text-lg font-semibold">
+                Total de productos:{" "}
+                <span className="text-white">
+                  {cartItems.length} 
+                </span>
+              </p>
+              <p className="text-lg font-semibold mt-2">
+                Total a pagar:{" "}
+                <span className="text-white">
+                  ${cartItems.reduce((acc, item) => acc + item.price * cartLength, 0).toFixed(2)}
+                </span>
+              </p>
 
-            <button
-              onClick={handleCheckout}
-              className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-md"
-            >
-              Finalizar compra
-            </button>
+              <button
+                onClick={handleCheckout}
+                className="mt-4 bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-md shadow-md"
+              >
+                Finalizar compra
+              </button>
+            </div>
           </>
         )}
       </div>

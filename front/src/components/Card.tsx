@@ -1,36 +1,54 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { IProduct } from "@/types/product";
-import { useCartStore } from "@/store/cartStore"; 
-import { useAuthStore } from "@/store/index"; 
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import store from "@/store/index";
+
 
 interface CardProps {
   producto: IProduct;
 }
 
 export const Card: React.FC<CardProps> = ({ producto }) => {
-  const { addToCart } = useCartStore();
-  const { token } = useAuthStore();
+
+   const [cartItems, setCartItems] = useState <IProduct[]>([]);
+  
+  const { userData, cart} = store();
+    const token = userData?.token;
   const router = useRouter();
+
+const addProduct = (product: IProduct): boolean => {
+    const exists = cart.find(p => p.id === product.id);
+    if (exists) return false;
+
+    const updatedCart = [...cart, product];
+    setCartItems(updatedCart);
+
+const userId = userData?.user.id;
+
+    localStorage.setItem(`cart_${userId}`, JSON.stringify(updatedCart));
+    return true;
+  };
 
   const handleAddToCart = () => {
     if (!token) {
       toast.error("Para sumar productos al carrito tienes que iniciar sesión");
       setTimeout(() => {
         router.push("/login");
-      }, 1500); // Le da tiempo al toast a mostrarse
+      }, 1500);
       return;
     }
 
-    addToCart(producto);
+    addProduct(producto);
     toast.success("Producto agregado al carrito");
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-4 w-64 flex flex-col items-center text-center transition transform hover:scale-105 duration-300">
+    <div className="bg-white rounded-xl shadow-md p-4 w-72 h-[460px] flex flex-col justify-between items-center text-center transition transform hover:scale-105 duration-300">
+      <p>TENES PRODUCTOS{cartItems.length}</p>
+      
       <Image
         src={producto.image}
         alt={producto.name}
@@ -39,17 +57,14 @@ export const Card: React.FC<CardProps> = ({ producto }) => {
         className="rounded-md mb-3 object-cover"
       />
       <h2 className="text-lg font-semibold text-gray-800 mb-1">{producto.name}</h2>
-      <p className="text-gray-600 text-sm mb-2">{producto.description}</p>
-      <p className="text-base font-bold text-green-600 mb-1">${producto.price}</p>
+      <p className="text-gray-600 text-sm mb-2 line-clamp-2">{producto.description}</p>
+      <p className="text-base font-bold text-gray-800 mb-1">${producto.price}</p>
       <p className="text-sm text-gray-500 mb-3">Stock: {producto.stock}</p>
       <button
         onClick={handleAddToCart}
-        className="bg-green-600 text-white py-1.5 px-3 rounded-md hover:bg-green-700 text-sm transition duration-300"
+        className="bg-blue-600 text-white py-1.5 px-3 rounded-md hover:bg-blue-700 text-sm transition duration-300"
       >
         Agregar al carrito
-      </button>
-      <button className="mt-2 bg-blue-600 text-white py-1.5 px-3 rounded-md hover:bg-blue-700 text-sm transition duration-300">
-        Ver detalles
       </button>
     </div>
   );
