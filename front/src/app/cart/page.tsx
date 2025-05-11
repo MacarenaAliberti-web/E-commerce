@@ -10,41 +10,42 @@ import store, { useStoreHasHydrated } from "@/store/index";
 export default function Cart() {
   const router = useRouter();
   const hasHydrated = useStoreHasHydrated();
-  const { userData, cart, setCart, isAuthenticated } = store();
+  const { userData, cart, setCart } = store();
 
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Para evitar el error de hidratación, espera a que el cliente se haya hidratado
+  // Espera a que Zustand esté listo
   useEffect(() => {
     if (hasHydrated) {
       setIsHydrated(true);
     }
   }, [hasHydrated]);
 
+  // Verifica autenticación
   useEffect(() => {
-    if (isHydrated && !isAuthenticated()) {
+    if (isHydrated && !store.getState().isAuthenticated()) {
+     
       toast.error("Debes iniciar sesión para acceder al carrito");
-      setTimeout(() => router.push("/"), 1500);
+      setTimeout(() => router.push("/login"), 1000);
     }
-  }, [isHydrated, isAuthenticated, router]);
+  }, [isHydrated, router]);
 
-  // Mostrar una carga inicial mientras se hidrata
   if (!isHydrated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-800">
-        <p className="text-white text-xl">Cargando datos...</p>
-      </div>
-    );
-  }
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-800">
+      <p className="text-white text-xl">Cargando datos...</p>
+    </div>
+  );
+}
 
-  // Mostrar mensaje si no está autenticado
-  if (!isAuthenticated()) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-800">
-        <p className="text-white text-xl">Verificando sesión...</p>
-      </div>
-    );
-  }
+if (!store.getState().isAuthenticated()) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-800">
+      <p className="text-white text-xl">Redirigiendo al login...</p>
+    </div>
+  );
+}
+
 
   const handleRemove = (id: number) => {
     setCart(cart.filter((item) => item.id !== id));

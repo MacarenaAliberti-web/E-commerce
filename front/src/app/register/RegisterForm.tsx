@@ -6,8 +6,8 @@ import { Label } from "@/components/ui/label";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import { registerUser } from "@/app/login/auth";
-import { RegisterUserType } from "@/types/user";  // Importamos la interfaz User
-import { toast } from "react-hot-toast";  // Asegúrate de que Toaster esté en layout.tsx
+import { RegisterUserType } from "@/types/user";  
+import { toast } from "react-hot-toast";  
 
 export function RegisterForm() {
   const {
@@ -16,24 +16,24 @@ export function RegisterForm() {
     reset,
     watch,
     formState: { errors, isValid },
-  } = useForm<RegisterUserType>({  // Usamos la interfaz User aquí
+  } = useForm<RegisterUserType>({  
     mode: "onChange",
   });
 
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const onSubmit = async (data: RegisterUserType) => {  // Usamos User aquí también
+  const onSubmit = async (data: RegisterUserType) => {  
     try {
-      await registerUser(data);  // Ahora pasamos el objeto User directamente
+      await registerUser(data);  
 
       setSuccessMessage("¡Registro enviado correctamente!");
-      toast.success("¡Registro exitoso!");  // Mostramos alerta de éxito
+      toast.success("¡Registro exitoso!");  
       reset();
       setErrorMessage("");
     } catch {
       setErrorMessage("Hubo un error al registrar el usuario.");
-      toast.error("Hubo un error al registrar el usuario.");  // Mostramos alerta de error
+      toast.error("Hubo un error al registrar el usuario.");  
       setSuccessMessage("");
     }
   };

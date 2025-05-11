@@ -7,6 +7,7 @@ import useHasHydrated from "@/hooks/useHasHydrated"
 import { getOrdersByUser } from "@/services/orderServices"
 import { IProduct } from "@/types/product"
 import Image from "next/image"
+import { toast } from "react-hot-toast"
 
 interface IOrder {
   id: number
@@ -17,16 +18,17 @@ interface IOrder {
 const OrderHistory = () => {
   const router = useRouter()
   const hasHydrated = useHasHydrated()
-  const { userData} = store()
+  const { userData, isAuthenticated } = store()
 
   const [orders, setOrders] = useState<IOrder[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (hasHydrated && !userData?.token) {
+    if (hasHydrated && !isAuthenticated()) {
+      toast.error("Debes iniciar sesión para acceder al historial de compras")
       router.push("/login")
     }
-  }, [hasHydrated, userData?.token, router])
+  }, [hasHydrated, isAuthenticated, router])
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -48,10 +50,10 @@ const OrderHistory = () => {
       setLoading(false)
     }
 
-    if (hasHydrated && userData?.token) {
+    if (hasHydrated && isAuthenticated()) {
       fetchOrders()
     }
-  }, [hasHydrated, userData])
+  }, [hasHydrated, isAuthenticated, userData])
 
   if (!hasHydrated) {
     return (
@@ -99,26 +101,26 @@ const OrderHistory = () => {
               </p>
 
               <div className="mt-2 space-y-2">
-       {order.products.map((product: IProduct) => (
-  <div
-    key={product.id}
-    className="flex items-center space-x-4 border p-2 rounded bg-blue-200"
-  >
-    <div className="relative w-16 h-16">
-      <Image
-        src={product.image}
-        alt={product.name}
-        layout="fill"
-        objectFit="contain"
-        className="rounded"
-      />
-    </div>
-    <div>
-      <p className="font-medium">{product.name}</p>
-      <p className="text-sm text-gray-600">${product.price}</p>
-    </div>
-  </div>
-))}
+                {order.products.map((product: IProduct) => (
+                  <div
+                    key={product.id}
+                    className="flex items-center space-x-4 border p-2 rounded bg-blue-200"
+                  >
+                    <div className="relative w-16 h-16">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        layout="fill"
+                        objectFit="contain"
+                        className="rounded"
+                      />
+                    </div>
+                    <div>
+                      <p className="font-medium">{product.name}</p>
+                      <p className="text-sm text-gray-600">${product.price}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div className="mt-2">
@@ -133,4 +135,3 @@ const OrderHistory = () => {
 }
 
 export default OrderHistory;
-

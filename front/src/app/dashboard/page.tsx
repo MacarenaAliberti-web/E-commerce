@@ -4,6 +4,7 @@ import React, { useEffect } from "react"
 import store from "@/store/index"
 import { useRouter } from "next/navigation"
 import useHasHydrated from "@/hooks/useHasHydrated"
+import { toast } from "react-hot-toast";
 
 export default function Dashboard() {
   const hasHydrated = useHasHydrated()
@@ -11,10 +12,12 @@ export default function Dashboard() {
   const router = useRouter()
 
   useEffect(() => {
-    if (hasHydrated && !userData?.token) {
-      router.push("/login")
-    }
-  }, [hasHydrated, userData?.token, router])
+  if (hasHydrated && !store.getState().isAuthenticated()) {
+    toast.error("Debes iniciar sesión para acceder al panel de usuario");
+    setTimeout(() => router.push("/login"), 1500);
+  }
+}, [hasHydrated, router]);
+
 
   if (!hasHydrated) {
     return (
@@ -63,25 +66,26 @@ export default function Dashboard() {
         </button>
       </aside>
 
-      <main className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold mb-6">
-            Bienvenido, {userData.user.name}
-          </h1>
+     <main className="flex-1 flex flex-col items-center pt-6">
+  <div className="text-center">
+    <h1 className="text-4xl font-extrabold mb-6">
+      Bienvenido, {userData.user.name}
+    </h1>
 
-          <div className="bg-gray-800 p-6 rounded-lg shadow-md max-w-xl mx-auto">
-            <h2 className="text-2xl font-semibold text-blue-400 mb-4">
-              Detalles de tu cuenta
-            </h2>
-            <div className="space-y-4 text-left">
-              <p><strong>Email:</strong> {userData.user.email}</p>
-              <p><strong>Nombre:</strong> {userData.user.name}</p>
-              <p><strong>Dirección:</strong> {userData.user.address}</p>
-              <p><strong>Teléfono:</strong> {userData.user.phone}</p>
-            </div>
-          </div>
-        </div>
-      </main>
+    <div className="bg-gray-800 p-6 rounded-lg shadow-md max-w-xl mx-auto">
+      <h2 className="text-2xl font-semibold text-blue-400 mb-4">
+        Detalles de tu cuenta
+      </h2>
+      <div className="space-y-4 text-left">
+        <p><strong>Email:</strong> {userData.user.email}</p>
+        <p><strong>Nombre:</strong> {userData.user.name}</p>
+        <p><strong>Dirección:</strong> {userData.user.address}</p>
+        <p><strong>Teléfono:</strong> {userData.user.phone}</p>
+      </div>
+    </div>
+  </div>
+</main>
+
     </div>
   )
 }
