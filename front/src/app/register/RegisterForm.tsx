@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
-import { registerUser } from "@/services/auth";
+import { registerUser } from "@/app/login/auth";
 import { RegisterUserType } from "@/types/user";  // Importamos la interfaz User
 import { toast } from "react-hot-toast";  // Asegúrate de que Toaster esté en layout.tsx
 

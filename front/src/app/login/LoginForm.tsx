@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
-import { loginUser } from "@/services/auth"; // 👉 función que hace la petición al backend
+import { loginUser } from "@/app/login/auth"; // 👉 función que hace la petición al backend
 import { toast } from "react-hot-toast"; // 👉 para mostrar notificaciones
 import { useRouter } from "next/navigation"; // 👉 Para redirigir después del login
 import { FormDataLoginType } from "@/types/user"; // 👉 tipado del formulario

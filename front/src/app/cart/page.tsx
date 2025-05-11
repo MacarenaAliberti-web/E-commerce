@@ -5,36 +5,56 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaShoppingCart } from "react-icons/fa";
 import { toast } from "react-hot-toast";
-import store from "@/store/index";
-
+import store, { useStoreHasHydrated } from "@/store/index";
 
 export default function Cart() {
   const router = useRouter();
-  const { userData, cart, setCart } = store(); // ✅ usamos cart desde Zustand
-  const token = userData?.token;
+  const hasHydrated = useStoreHasHydrated();
+  const { userData, cart, setCart, isAuthenticated } = store();
 
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Para evitar el error de hidratación, espera a que el cliente se haya hidratado
+  useEffect(() => {
+    if (hasHydrated) {
+      setIsHydrated(true);
+    }
+  }, [hasHydrated]);
 
   useEffect(() => {
-    if (!token) {
+    if (isHydrated && !isAuthenticated()) {
       toast.error("Debes iniciar sesión para acceder al carrito");
-      setTimeout(() => {
-        router.push("/");
-      }, 1500);
-    } else {
-      setCheckingAuth(false);
+      setTimeout(() => router.push("/"), 1500);
     }
-  }, [token, router]);
+  }, [isHydrated, isAuthenticated, router]);
+
+  // Mostrar una carga inicial mientras se hidrata
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-800">
+        <p className="text-white text-xl">Cargando datos...</p>
+      </div>
+    );
+  }
+
+  // Mostrar mensaje si no está autenticado
+  if (!isAuthenticated()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-800">
+        <p className="text-white text-xl">Verificando sesión...</p>
+      </div>
+    );
+  }
 
   const handleRemove = (id: number) => {
-    const updated = cart.filter((item) => item.id !== id);
-    setCart(updated);
+    setCart(cart.filter((item) => item.id !== id));
   };
 
   const handleCheckout = async () => {
     try {
-      const products = cart.map((item) => item.id ?? 0);
+      const products = cart.map((item) => item.id);
       const userId = userData?.user.id;
+      const token = userData?.token;
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         method: "POST",
@@ -59,15 +79,8 @@ export default function Cart() {
     }
   };
 
-  if (checkingAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-800">
-        <p className="text-white text-xl">Verificando sesión...</p>
-      </div>
-    );
-  }
-
   const cartLength = cart.length;
+  const totalPrice = cart.reduce((acc, item) => acc + item.price, 0).toFixed(2);
 
   return (
     <div className="min-h-screen bg-gray-800 text-white py-12">
@@ -98,7 +111,7 @@ export default function Cart() {
                     </div>
                   </div>
                   <button
-                    onClick={() => handleRemove(item.id ?? 0)}
+                    onClick={() => item.id !== undefined && handleRemove(item.id)}
                     className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-md shadow-md"
                   >
                     Eliminar
@@ -109,14 +122,10 @@ export default function Cart() {
 
             <div className="flex flex-col items-center justify-center text-center mt-12">
               <p className="text-lg font-semibold">
-                Total de productos:{" "}
-                <span className="text-white">{cartLength}</span>
+                Total de productos: <span className="text-white">{cartLength}</span>
               </p>
               <p className="text-lg font-semibold mt-2">
-                Total a pagar:{" "}
-                <span className="text-white">
-                  ${cart.reduce((acc, item) => acc + item.price, 0).toFixed(2)}
-                </span>
+                Total a pagar: <span className="text-white">${totalPrice}</span>
               </p>
 
               <button

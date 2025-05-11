@@ -11,7 +11,7 @@ interface CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({ producto }) => {
-  const { userData, cart, setCart } = store(); // ✅ usamos setCart del store
+  const { userData, cart, setCart } = store();
   const token = userData?.token;
   const router = useRouter();
 
@@ -30,32 +30,46 @@ export const Card: React.FC<CardProps> = ({ producto }) => {
       return;
     }
 
-    setCart([...cart, producto]); // ✅ actualizamos el carrito global Zustand
+    setCart([...cart, producto]);
     toast.success("Producto agregado al carrito");
   };
 
-  return (
-    <div className="bg-white rounded-xl shadow-md p-4 w-72 h-[460px] flex flex-col justify-between items-center text-center transition transform hover:scale-105 duration-300">
+  const handleViewDetails = () => {
+    router.push(`/products/${producto.id}`);
+  };
+
+ return (
+  <div className="bg-white rounded-xl shadow-lg p-6 w-80 h-[350px] flex flex-col items-center justify-between text-center transition transform hover:scale-105 hover:shadow-xl duration-300">
+    <div className="flex flex-col items-center mb-4">
+      <h2 className="text-xl font-semibold text-gray-800 mb-3 text-center">{producto.name}</h2>
       <Image
         src={producto.image}
         alt={producto.name}
         width={160}
         height={160}
-        className="rounded-md mb-3 object-cover"
+        className="rounded-md object-cover shadow-md transition duration-300 hover:scale-105"
       />
-      <h2 className="text-lg font-semibold text-gray-800 mb-1">{producto.name}</h2>
-      <p className="text-gray-600 text-sm mb-2 line-clamp-2">{producto.description}</p>
-      <p className="text-base font-bold text-gray-800 mb-1">${producto.price}</p>
-      <p className="text-sm text-gray-500 mb-3">Stock: {producto.stock}</p>
-      <button
-        onClick={handleAddToCart}
-        className="bg-blue-600 text-white py-1.5 px-3 rounded-md hover:bg-blue-700 text-sm transition duration-300"
-      >
-        Agregar al carrito
-      </button>
     </div>
-  );
-};
 
+    <div className="flex justify-center items-center w-full mt-4 gap-2">
+  <button
+    onClick={handleAddToCart}
+    className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-900 text-xl w-12 h-12 flex items-center justify-center transition duration-300"
+  >
+    🛒
+  </button>
+
+  <button
+    onClick={handleViewDetails}
+    className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400 text-sm transition duration-300"
+  >
+    Ver detalles
+  </button>
+</div>
+  </div>
+);
+
+}
 export default Card;
+
 

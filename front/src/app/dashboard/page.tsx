@@ -1,26 +1,25 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import store from "@/store/index"
 import { useRouter } from "next/navigation"
+import useHasHydrated from "@/hooks/useHasHydrated"
 
 export default function Dashboard() {
+  const hasHydrated = useHasHydrated()
   const { userData, logout } = store()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!userData?.token) {
+    if (hasHydrated && !userData?.token) {
       router.push("/login")
-    } else {
-      setLoading(false)
     }
-  }, [userData?.token, router])
+  }, [hasHydrated, userData?.token, router])
 
-  if (loading) {
+  if (!hasHydrated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-800">
-        <h1 className="text-2xl font-bold text-white">Cargando...</h1>
+        <h1 className="text-2xl font-bold text-white">Cargando datos...</h1>
       </div>
     )
   }
@@ -36,42 +35,53 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-800 text-white flex flex-col items-center py-10">
-      <h1 className="text-4xl font-extrabold text-gray-100 mb-6">
-        Bienvenido, {userData.user.name}
-      </h1>
-
-      <div className="bg-gray-900 p-6 rounded-lg shadow-md max-w-2xl w-full">
-        <h2 className="text-2xl font-semibold text-blue-400 mb-4">
-          Detalles de tu cuenta
-        </h2>
-        <div className="space-y-4">
-          <p>
-            <strong>Email:</strong> {userData.user.email}
-          </p>
-          <p>
-            <strong>Nombre:</strong> {userData.user.name}
-          </p>
-          <p>
-            <strong>Dirección:</strong> {userData.user.address}
-          </p>
-          <p>
-            <strong>Teléfono:</strong> {userData.user.phone}
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-8 flex gap-4">
+    <div className="min-h-screen flex bg-gray-900 text-white">
+      <aside className="w-64 bg-gray-800 p-6 flex flex-col">
+        <h2 className="text-2xl font-bold mb-6">Mi Panel</h2>
+        <nav className="space-y-4 mb-6">
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="block w-full text-left text-white hover:text-blue-400"
+          >
+            Perfil
+          </button>
+          <button
+            onClick={() => router.push("/order-history")}
+            className="block w-full text-left text-white hover:text-blue-400"
+          >
+            Historial de compras
+          </button>
+        </nav>
         <button
           onClick={() => {
             logout()
             router.push("/")
           }}
-          className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-md shadow-md"
+          className="block w-full text-left text-white hover:text-blue-400"
         >
           Cerrar sesión
         </button>
-      </div>
+      </aside>
+
+      <main className="flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold mb-6">
+            Bienvenido, {userData.user.name}
+          </h1>
+
+          <div className="bg-gray-800 p-6 rounded-lg shadow-md max-w-xl mx-auto">
+            <h2 className="text-2xl font-semibold text-blue-400 mb-4">
+              Detalles de tu cuenta
+            </h2>
+            <div className="space-y-4 text-left">
+              <p><strong>Email:</strong> {userData.user.email}</p>
+              <p><strong>Nombre:</strong> {userData.user.name}</p>
+              <p><strong>Dirección:</strong> {userData.user.address}</p>
+              <p><strong>Teléfono:</strong> {userData.user.phone}</p>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   )
 }

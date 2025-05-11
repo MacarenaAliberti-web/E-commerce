@@ -64,5 +64,8 @@ const store = create<IStoreState>()(
   )
 )
 
-export default store
+export const useStoreHasHydrated = () => store.persist?.hasHydrated?.()
+export const storePersist = store.persist
+
+export default store;
 
