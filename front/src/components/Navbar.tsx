@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaUser, FaShoppingCart, FaHome, FaPowerOff } from "react-icons/fa";
+import { FaUser, FaShoppingCart, FaHome } from "react-icons/fa";
+import { FiLogOut } from "react-icons/fi"; // Nuevo ícono para logout
 import store from "@/store/index";
 import useHasHydrated from "@/hooks/useHasHydrated";
 
@@ -52,49 +53,63 @@ export default function Navbar() {
 
           <div className="flex items-center gap-3 text-lg relative">
             {!token ? (
-              <>
-                <Link href="/register" className="hover:text-gray-300">
-                  📝
-                </Link>
-                <Link href="/login" className="hover:text-gray-300">
-                  <FaUser />
-                </Link>
-              </>
+             <>
+  <Link href="/register" title="Crear una cuenta">
+    <span className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-900 transition transform hover:scale-105 cursor-pointer text-sm font-medium">
+      REGISTRATE
+    </span>
+  </Link>
+
+  <Link href="/login" title="Ingresar a tu cuenta">
+    <span className="flex items-center gap-2 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition transform hover:scale-105 cursor-pointer text-sm font-medium">
+      <FaUser />
+      INGRESA
+    </span>
+  </Link>
+</>
+
             ) : (
-              <>
-                <Link
-                  href="/"
-                  className="bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-md transition"
-                >
-                  <FaHome />
-                </Link>
+            <>
+  <button
+    title="Home"
+    onClick={() => router.push("/")}
+    className="text-white text-xl p-2 rounded-md transition transform hover:scale-110 cursor-pointer"
+  >
+    <FaHome />
+  </button>
 
-                <Link
-                  href="/dashboard"
-                  className="bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-md transition"
-                >
-                  <FaUser />
-                </Link>
+  <button
+    title="Perfil"
+    onClick={() => router.push("/dashboard")}
+    className="text-white text-xl p-2 rounded-md transition transform hover:scale-110 cursor-pointer"
+  >
+    <FaUser />
+  </button>
 
-                <Link
-                  href="/cart"
-                  className="relative bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-md transition"
-                >
-                  <FaShoppingCart />
-                  {cart.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                      {cart.length}
-                    </span>
-                  )}
-                </Link>
+  <div className="relative">
+    <button
+      title="Carrito"
+      onClick={() => router.push("/cart")}
+      className="text-white text-xl p-2 rounded-md transition transform hover:scale-110 cursor-pointer"
+    >
+      <FaShoppingCart />
+    </button>
+    {cart.length > 0 && (
+      <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+        {cart.length}
+      </span>
+    )}
+  </div>
 
-                <button
-                  onClick={() => setShowLogoutModal(true)}
-                  className="bg-red-600 hover:bg-red-500 text-white p-2 rounded-md transition"
-                >
-                  <FaPowerOff />
-                </button>
-              </>
+  <button
+    onClick={() => setShowLogoutModal(true)}
+    title="Cerrar sesión"
+    className="text-white text-xl p-2 rounded-md bg-red-600 hover:bg-red-500 transition transform hover:scale-110 cursor-pointer"
+  >
+    <FiLogOut />
+  </button>
+</>
+
             )}
           </div>
         </div>
@@ -102,7 +117,7 @@ export default function Navbar() {
 
       {/* Modal de confirmación */}
       {showLogoutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-xl text-center max-w-sm">
             <h2 className="text-lg font-semibold mb-4">
               ¿Estás seguro que querés cerrar sesión?
@@ -116,7 +131,7 @@ export default function Navbar() {
               </button>
               <button
                 onClick={confirmLogout}
-                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded"
+                className="px-2 py-2 bg-red-600 text-white hover:bg-red-700 rounded"
               >
                 Sí, cerrar sesión
               </button>

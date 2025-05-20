@@ -156,28 +156,28 @@ export default function Cart() {
 
       {/* Modal de confirmación */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 shadow-xl text-center max-w-sm">
-            <h2 className="text-lg font-semibold mb-4 text-black">
-              ¿Estás seguro que deseas eliminar este producto del carrito?
-            </h2>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded text-black"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleRemove}
-                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  <div className="fixed z-50 flex items-center justify-center inset-0">
+    <div className="bg-white rounded-lg p-6 shadow-xl text-center max-w-xs relative z-10"> {/* Modal centrado */}
+      <h2 className="text-lg font-semibold mb-4 text-black">
+        ¿Estás seguro que deseas eliminar este producto del carrito?
+      </h2>
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={() => setShowModal(false)}
+          className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded text-black"
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={handleRemove}
+          className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }

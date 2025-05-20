@@ -6,6 +6,7 @@ import Card from "@/components/Card";
 import Carousel from "@/components/Carousel";
 import { getProducts } from "@/services/products";
 import { IProduct } from "@/types/product";
+import Link from "next/link";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -36,11 +37,24 @@ export default function Home() {
       {loading ? (
         <p className="text-white text-center">Cargando productos...</p>
       ) : filteredProducts.length > 0 ? (
+         <>
         <div className="flex flex-wrap justify-center gap-6">
           {filteredProducts.map((producto) => (
             <Card key={producto.id} producto={producto} />
           ))}
         </div>
+
+             {/* Botón para ver todos los productos */}
+          <div className="mt-10 flex justify-center">
+            <Link
+              href="/products"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-300"
+            >
+              Ver todos los productos
+            </Link>
+          </div>
+        </>
+
       ) : (
         <p className="text-white text-center mt-4">No se encontraron productos.</p>
       )}
