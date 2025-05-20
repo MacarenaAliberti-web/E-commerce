@@ -7,6 +7,12 @@ export async function getProducts() {
             method: 'GET',
             
         });
+
+       
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
         const products: IProduct[] = await response.json();
         console.log(' ~ getProducts ~ products:', products)
         return products;

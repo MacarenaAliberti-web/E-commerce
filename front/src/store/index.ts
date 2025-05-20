@@ -1,4 +1,3 @@
-// store/index.ts
 import { IProduct } from '@/types/product'
 import { create } from 'zustand'
 import { persist, devtools, createJSONStorage } from 'zustand/middleware'
@@ -28,9 +27,11 @@ interface IUserData {
 interface IStoreState {
   userData: IUserData | null
   cart: IProduct[]
+  redirectAfterLogin: string | null // <-- AGREGAR ESTO
 
   setUserData: (userData: IUserData | null) => void
   setCart: (data: IProduct[]) => void
+  setRedirectAfterLogin: (path: string | null) => void // <-- AGREGAR ESTO
 
   login: (userData: IUserData) => void
   logout: () => void
@@ -44,9 +45,11 @@ const store = create<IStoreState>()(
       (set, get) => ({
         userData: null,
         cart: [],
+        redirectAfterLogin: null, // <-- NUEVO ESTADO
 
         setUserData: (userData: IUserData | null) => set({ userData }),
         setCart: (data) => set({ cart: data }),
+        setRedirectAfterLogin: (path) => set({ redirectAfterLogin: path }), // <-- NUEVA FUNCIÓN
 
         login: (userData: IUserData) => set({ userData }),
         logout: () => set({ userData: null, cart: [] }),

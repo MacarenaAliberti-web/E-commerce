@@ -5,13 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
-import { loginUser } from "@/app/login/auth"; // 👉 función que hace la petición al backend
-import { toast } from "react-hot-toast"; // 👉 para mostrar notificaciones
-import { useRouter } from "next/navigation"; // 👉 Para redirigir después del login
-import { FormDataLoginType } from "@/types/user"; // 👉 tipado del formulario
+import { loginUser } from "@/app/login/auth"; 
+import { toast } from "react-hot-toast"; 
+import { useRouter } from "next/navigation"; 
+import { FormDataLoginType } from "@/types/user"; 
+import store from "@/store";
+
 
 export function LoginForm() {
-  const router = useRouter(); // 👉 Para redirigir al Dashboard después del login
+  const router = useRouter(); 
   const {
     control,
     handleSubmit,
@@ -24,22 +26,27 @@ export function LoginForm() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const onSubmit = async (data: FormDataLoginType) => {
-    try {
-      await loginUser(data); // Llamada a la API para el login
-      setSuccessMessage("¡Inicio de sesión exitoso!");
-      toast.success("¡Bienvenido de nuevo!");
-      reset();
-      setErrorMessage("");
+ const onSubmit = async (data: FormDataLoginType) => {
+  try {
+    await loginUser(data); 
+    setSuccessMessage("¡Inicio de sesión exitoso!");
+    toast.success("¡Bienvenido de nuevo!");
+    reset();
+    setErrorMessage("");
 
-      // Redirigir al dashboard después de login exitoso
-      router.push("/dashboard"); 
-    } catch {
-      setErrorMessage("Credenciales incorrectas o error del servidor.");
-      toast.error("Error al iniciar sesión");
-      setSuccessMessage("");
+    const redirectPath = store.getState().redirectAfterLogin;
+    if (redirectPath) {
+      store.setState({ redirectAfterLogin: null }); 
+      router.push(redirectPath);
+    } else {
+      router.push("/");
     }
-  };
+  } catch {
+    setErrorMessage("Credenciales incorrectas o error del servidor.");
+    toast.error("Error al iniciar sesión");
+    setSuccessMessage("");
+  }
+};
 
   return (
     <form
@@ -107,7 +114,7 @@ export function LoginForm() {
       <Button
         type="submit"
         className="w-full"
-        disabled={!isValid} // Deshabilitar si el formulario no es válido
+        disabled={!isValid} 
       >
         Iniciar Sesión
       </Button>

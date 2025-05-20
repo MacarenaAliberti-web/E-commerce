@@ -11,12 +11,13 @@ interface CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({ producto }) => {
-  const { userData, cart, setCart } = store();
+  const { userData, cart, setCart, setRedirectAfterLogin } = store();
   const token = userData?.token;
   const router = useRouter();
 
   const handleAddToCart = () => {
     if (!token) {
+    setRedirectAfterLogin(window.location.pathname);
       toast.error("Para sumar productos al carrito tienes que iniciar sesión");
       setTimeout(() => {
         router.push("/login");
