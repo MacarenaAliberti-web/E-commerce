@@ -14,6 +14,10 @@ export default function Cart() {
 
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // Estado para modal
+  const [showModal, setShowModal] = useState(false);
+  const [productToRemove, setProductToRemove] = useState<number | null>(null);
+
   // Espera a que Zustand esté listo
   useEffect(() => {
     if (hasHydrated) {
@@ -24,31 +28,41 @@ export default function Cart() {
   // Verifica autenticación
   useEffect(() => {
     if (isHydrated && !store.getState().isAuthenticated()) {
-     
       toast.error("Debes iniciar sesión para acceder al carrito");
       setTimeout(() => router.push("/login"), 1000);
     }
   }, [isHydrated, router]);
 
   if (!isHydrated) {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-800">
-      <p className="text-white text-xl">Cargando datos...</p>
-    </div>
-  );
-}
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-800">
+        <p className="text-white text-xl">Cargando datos...</p>
+      </div>
+    );
+  }
 
-if (!store.getState().isAuthenticated()) {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-800">
-      <p className="text-white text-xl">Redirigiendo al login...</p>
-    </div>
-  );
-}
+  if (!store.getState().isAuthenticated()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-800">
+        <p className="text-white text-xl">Redirigiendo al login...</p>
+      </div>
+    );
+  }
 
+  // Abrir modal para confirmar eliminación
+  const confirmRemove = (id: number) => {
+    setProductToRemove(id);
+    setShowModal(true);
+  };
 
-  const handleRemove = (id: number) => {
-    setCart(cart.filter((item) => item.id !== id));
+  // Confirmar eliminación
+  const handleRemove = () => {
+    if (productToRemove !== null) {
+      setCart(cart.filter((item) => item.id !== productToRemove));
+      toast.success("Producto eliminado del carrito");
+    }
+    setShowModal(false);
+    setProductToRemove(null);
   };
 
   const handleCheckout = async () => {
@@ -112,7 +126,7 @@ if (!store.getState().isAuthenticated()) {
                     </div>
                   </div>
                   <button
-                    onClick={() => item.id !== undefined && handleRemove(item.id)}
+                    onClick={() => item.id !== undefined && confirmRemove(item.id)}
                     className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-md shadow-md"
                   >
                     Eliminar
@@ -139,6 +153,31 @@ if (!store.getState().isAuthenticated()) {
           </>
         )}
       </div>
+
+      {/* Modal de confirmación */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6 shadow-xl text-center max-w-sm">
+            <h2 className="text-lg font-semibold mb-4 text-black">
+              ¿Estás seguro que deseas eliminar este producto del carrito?
+            </h2>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded text-black"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleRemove}
+                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

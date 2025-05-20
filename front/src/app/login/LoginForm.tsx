@@ -125,6 +125,18 @@ export function LoginForm() {
       {errorMessage && (
         <p className="text-red-600 text-center text-sm mt-4">{errorMessage}</p>
       )}
+
+      <div className="text-center mt-6 text-sm text-gray-700">
+        ¿No estás registrado?{" "}
+        <button
+          type="button"
+          onClick={() => router.push("/register")}
+          className="text-blue-600 hover:underline focus:outline-none"
+        >
+          Regístrate
+        </button>
+      </div>
     </form>
   );
 }
+

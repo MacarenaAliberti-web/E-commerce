@@ -4,36 +4,46 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, Controller } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { registerUser } from "@/app/login/auth";
 import { RegisterUserType } from "@/types/user";  
 import { toast } from "react-hot-toast";  
+import { useRouter } from "next/navigation";
 
 export function RegisterForm() {
+  const router = useRouter();
   const {
     control,
     handleSubmit,
     reset,
     watch,
     formState: { errors, isValid },
-  } = useForm<RegisterUserType>({  
-    mode: "onChange",
+    trigger,
+  } = useForm<RegisterUserType>({
+    mode: "all",
   });
+
+  useEffect(() => {
+    trigger();
+  }, [trigger]);
 
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const onSubmit = async (data: RegisterUserType) => {  
+  const onSubmit = async (data: RegisterUserType) => {
     try {
-      await registerUser(data);  
+      await registerUser(data);
 
       setSuccessMessage("¡Registro enviado correctamente!");
-      toast.success("¡Registro exitoso!");  
+      toast.success("¡Registro exitoso!");
       reset();
       setErrorMessage("");
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
     } catch {
       setErrorMessage("Hubo un error al registrar el usuario.");
-      toast.error("Hubo un error al registrar el usuario.");  
+      toast.error("Hubo un error al registrar el usuario.");
       setSuccessMessage("");
     }
   };
@@ -109,6 +119,11 @@ export function RegisterForm() {
               value: 6,
               message: "Debe tener al menos 6 caracteres",
             },
+            pattern: {
+              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+              message:
+                "La contraseña debe tener mayúsculas, minúsculas, números y un carácter especial",
+            },
           }}
           render={({ field }) => (
             <Input
@@ -181,13 +196,29 @@ export function RegisterForm() {
           name="phone"
           control={control}
           defaultValue=""
-          rules={{ required: "El teléfono es obligatorio" }}
+          rules={{
+            required: "El teléfono es obligatorio",
+            pattern: {
+              value: /^[0-9]+$/,
+              message: "El teléfono solo debe contener números",
+            },
+            minLength: {
+              value: 7,
+              message: "El teléfono debe tener al menos 7 dígitos",
+            },
+            maxLength: {
+              value: 15,
+              message: "El teléfono no puede tener más de 15 dígitos",
+            },
+          }}
           render={({ field }) => (
             <Input
               {...field}
               id="phone"
               placeholder="Ingrese su teléfono"
               className={errors.phone ? "border-red-500" : ""}
+              maxLength={15}
+              inputMode="numeric"
             />
           )}
         />
@@ -196,11 +227,7 @@ export function RegisterForm() {
         )}
       </div>
 
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={!isValid}
-      >
+      <Button type="submit" className="w-full" disabled={!isValid}>
         Registrarse
       </Button>
 
