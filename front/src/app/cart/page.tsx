@@ -14,18 +14,18 @@ export default function Cart() {
 
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Estado para modal
+  
   const [showModal, setShowModal] = useState(false);
   const [productToRemove, setProductToRemove] = useState<number | null>(null);
 
-  // Espera a que Zustand esté listo
+  
   useEffect(() => {
     if (hasHydrated) {
       setIsHydrated(true);
     }
   }, [hasHydrated]);
 
-  // Verifica autenticación
+  
   useEffect(() => {
     if (isHydrated && !store.getState().isAuthenticated()) {
       toast.error("Debes iniciar sesión para acceder al carrito");
@@ -49,13 +49,13 @@ export default function Cart() {
     );
   }
 
-  // Abrir modal para confirmar eliminación
+  
   const confirmRemove = (id: number) => {
     setProductToRemove(id);
     setShowModal(true);
   };
 
-  // Confirmar eliminación
+  
   const handleRemove = () => {
     if (productToRemove !== null) {
       setCart(cart.filter((item) => item.id !== productToRemove));
@@ -154,7 +154,7 @@ export default function Cart() {
         )}
       </div>
 
-      {/* Modal de confirmación */}
+      
       {showModal && (
   <div className="fixed z-50 flex items-center justify-center inset-0">
     <div className="bg-white rounded-lg p-6 shadow-xl text-center max-w-xs relative z-10"> {/* Modal centrado */}

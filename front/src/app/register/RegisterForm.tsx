@@ -55,7 +55,7 @@ export function RegisterForm() {
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-6 max-w-md mx-auto p-6 border rounded-xl shadow-md bg-white"
     >
-      {/* Nombre */}
+      
       <div className="space-y-1">
         <Label htmlFor="name">Nombre</Label>
         <Controller
@@ -77,7 +77,7 @@ export function RegisterForm() {
         )}
       </div>
 
-      {/* Email */}
+      
       <div className="space-y-1">
         <Label htmlFor="email">Email</Label>
         <Controller
@@ -106,7 +106,7 @@ export function RegisterForm() {
         )}
       </div>
 
-      {/* Contraseña */}
+      
       <div className="space-y-1">
         <Label htmlFor="password">Contraseña</Label>
         <Controller
@@ -140,7 +140,7 @@ export function RegisterForm() {
         )}
       </div>
 
-      {/* Confirmar contraseña */}
+      
       <div className="space-y-1">
         <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
         <Controller
@@ -167,7 +167,7 @@ export function RegisterForm() {
         )}
       </div>
 
-      {/* Dirección */}
+      
       <div className="space-y-1">
         <Label htmlFor="address">Dirección</Label>
         <Controller
@@ -189,7 +189,7 @@ export function RegisterForm() {
         )}
       </div>
 
-      {/* Teléfono */}
+      
       <div className="space-y-1">
         <Label htmlFor="phone">Teléfono</Label>
         <Controller

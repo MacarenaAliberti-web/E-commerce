@@ -27,7 +27,7 @@ export default function Home() {
 
   return (
     <div className="bg-gray-800 min-h-screen p-6">
-      {/* Carrusel */}
+      
       <Carousel />
 
       <h1 className="text-3xl font-bold text-center text-gray-100 mb-8">
@@ -44,7 +44,7 @@ export default function Home() {
           ))}
         </div>
 
-             {/* Botón para ver todos los productos */}
+             
           <div className="mt-10 flex justify-center">
             <Link
               href="/products"

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaUser, FaShoppingCart, FaHome } from "react-icons/fa";
-import { FiLogOut } from "react-icons/fi"; // Nuevo ícono para logout
+import { FiLogOut } from "react-icons/fi"; 
 import store from "@/store/index";
 import useHasHydrated from "@/hooks/useHasHydrated";
 
@@ -115,7 +115,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Modal de confirmación */}
+      
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-xl text-center max-w-sm">

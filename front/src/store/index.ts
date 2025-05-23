@@ -27,11 +27,11 @@ interface IUserData {
 interface IStoreState {
   userData: IUserData | null
   cart: IProduct[]
-  redirectAfterLogin: string | null // <-- AGREGAR ESTO
+  redirectAfterLogin: string | null 
 
   setUserData: (userData: IUserData | null) => void
   setCart: (data: IProduct[]) => void
-  setRedirectAfterLogin: (path: string | null) => void // <-- AGREGAR ESTO
+  setRedirectAfterLogin: (path: string | null) => void 
 
   login: (userData: IUserData) => void
   logout: () => void
@@ -45,11 +45,11 @@ const store = create<IStoreState>()(
       (set, get) => ({
         userData: null,
         cart: [],
-        redirectAfterLogin: null, // <-- NUEVO ESTADO
+        redirectAfterLogin: null, 
 
         setUserData: (userData: IUserData | null) => set({ userData }),
         setCart: (data) => set({ cart: data }),
-        setRedirectAfterLogin: (path) => set({ redirectAfterLogin: path }), // <-- NUEVA FUNCIÓN
+        setRedirectAfterLogin: (path) => set({ redirectAfterLogin: path }), 
 
         login: (userData: IUserData) => set({ userData }),
         logout: () => set({ userData: null, cart: [] }),
@@ -61,7 +61,7 @@ const store = create<IStoreState>()(
         storage:
           typeof window !== "undefined"
             ? createJSONStorage(() => localStorage)
-            : undefined, // <- evita error en SSR
+            : undefined, 
       }
     )
   )

@@ -3,7 +3,7 @@ import { apiUrl } from "@/config/apiURL";
 import { RegisterUserType, FormDataLoginType } from "@/types/user";
 import store from "@/store/index"; 
 
-// 👉 Registro de usuario
+
 export async function registerUser(userData: RegisterUserType) {
   const { email, password, name, address, phone } = userData;
 
@@ -27,7 +27,7 @@ export async function registerUser(userData: RegisterUserType) {
   }
 }
 
-// 👉 Login de usuario
+
 export async function loginUser(credentials: FormDataLoginType) {
   try {
     const response = await fetch(`${apiUrl}/users/login`, {
@@ -44,7 +44,7 @@ export async function loginUser(credentials: FormDataLoginType) {
 
     const data = await response.json();
 
-    // ✅ Actualizar Zustand store con token y user
+    
     store.getState().setUserData({
       login: true,
       token: data.token,
