@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
-import { loginUser } from "@/app/login/auth"; 
+import { loginUser } from "@/services/auth"; 
 import { toast } from "react-hot-toast"; 
 import { useRouter } from "next/navigation"; 
 import { FormDataLoginType } from "@/types/user"; 
-import store from "@/store";
+import store from "@/store/index";
 
 
 export function LoginForm() {

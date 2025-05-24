@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaUser, FaShoppingCart, FaHome } from "react-icons/fa";
+import { FaUser, FaShoppingCart, FaHome, FaShoppingBag } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi"; 
 import store from "@/store/index";
 import useHasHydrated from "@/hooks/useHasHydrated";
@@ -79,11 +79,19 @@ export default function Navbar() {
   </button>
 
   <button
-    title="Perfil"
+    title="Mi Perfil"
     onClick={() => router.push("/dashboard")}
     className="text-white text-xl p-2 rounded-md transition transform hover:scale-110 cursor-pointer"
   >
     <FaUser />
+  </button>
+
+  <button
+    title="Mis Compras"
+    onClick={() => router.push("/order-history")}
+    className="text-white text-xl p-2 rounded-md transition transform hover:scale-110 cursor-pointer"
+  >
+    <FaShoppingBag />
   </button>
 
   <div className="relative">

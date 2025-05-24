@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, Controller } from "react-hook-form";
 import { useState, useEffect } from "react";
-import { registerUser } from "@/app/login/auth";
+import { registerUser } from "@/services/auth";
 import { RegisterUserType } from "@/types/user";  
 import { toast } from "react-hot-toast";  
 import { useRouter } from "next/navigation";

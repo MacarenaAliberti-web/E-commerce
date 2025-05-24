@@ -1,4 +1,4 @@
-"use client";
+
 import { apiUrl } from "@/config/apiURL";
 import { RegisterUserType, FormDataLoginType } from "@/types/user";
 import store from "@/store/index"; 
