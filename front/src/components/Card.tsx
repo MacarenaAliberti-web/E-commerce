@@ -52,13 +52,19 @@ export const Card: React.FC<CardProps> = ({ producto }) => {
       />
     </div>
 
-    <div className="flex justify-center items-center w-full mt-4 gap-2">
-  <button
-    onClick={handleAddToCart}
-    className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-900 text-xl w-12 h-12 flex items-center justify-center transition duration-300"
-  >
-    🛒
-  </button>
+   <div className="flex justify-center items-center w-full mt-4 gap-2">
+  <div className="relative group">
+    <button
+      onClick={handleAddToCart}
+      aria-label="Agregar al carrito"
+      className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-900 text-xl w-12 h-12 flex items-center justify-center transition duration-300"
+    >
+      🛒
+    </button>
+    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-xs rounded py-1 px-2 pointer-events-none whitespace-nowrap">
+      Agregar al carrito
+    </span>
+  </div>
 
   <button
     onClick={handleViewDetails}
@@ -67,6 +73,7 @@ export const Card: React.FC<CardProps> = ({ producto }) => {
     Ver detalles
   </button>
 </div>
+
   </div>
 );
 

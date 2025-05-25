@@ -12,7 +12,4 @@ export interface IProduct {
   };
 }
 
-export interface CardComponentProps {
-  producto: IProduct;
-}
 
