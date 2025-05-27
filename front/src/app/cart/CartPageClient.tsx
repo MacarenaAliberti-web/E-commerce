@@ -123,6 +123,21 @@ export default function Cart() {
                     <div>
                       <h2 className="text-lg font-semibold">{item.name}</h2>
                       <p className="text-sm text-gray-400">Precio: ${item.price}</p>
+                       <div className="flex items-center gap-2 mt-2">
+      <button
+        disabled
+        className="px-2 py-1 bg-gray-600 text-white rounded cursor-not-allowed opacity-50"
+      >
+        +
+      </button>
+      <span>1</span>
+      <button
+        disabled
+        className="px-2 py-1 bg-gray-600 text-white rounded cursor-not-allowed opacity-50"
+      >
+        -
+      </button>
+                   </div>
                     </div>
                   </div>
                   <button
