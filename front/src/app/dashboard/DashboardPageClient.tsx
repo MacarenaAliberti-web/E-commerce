@@ -8,12 +8,12 @@ import { toast } from "react-hot-toast";
 
 export default function Dashboard() {
   const hasHydrated = useHasHydrated()
-  const { userData, logout } = store()
+  const { userData } = store()
   const router = useRouter()
 
   useEffect(() => {
   if (hasHydrated && !store.getState().isAuthenticated()) {
-    toast.error("Debes iniciar sesión para acceder al panel de usuario");
+    toast.error("Debes iniciar sesión para acceder al perfil de usuario");
     setTimeout(() => router.push("/login"), 1500);
   }
 }, [hasHydrated, router]);
@@ -42,12 +42,7 @@ export default function Dashboard() {
       <aside className="w-64 bg-gray-800 p-6 flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Mi Perfil</h2>
         <nav className="space-y-4 mb-6">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="block w-full text-left text-white hover:text-blue-400"
-          >
-            
-          </button>
+
           <button
             onClick={() => router.push("/order-history")}
             className="block w-full text-left text-white hover:text-blue-400"
@@ -55,15 +50,7 @@ export default function Dashboard() {
             Historial de compras
           </button>
         </nav>
-        <button
-          onClick={() => {
-            logout()
-            router.push("/")
-          }}
-          className="block w-full text-left text-white hover:text-blue-400"
-        >
-          Cerrar sesión
-        </button>
+       
       </aside>
 
      <main className="flex-1 flex flex-col items-center pt-6">

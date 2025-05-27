@@ -1,6 +1,6 @@
 import { apiUrl } from "@/config/apiURL";
 
-export async function getOrdersByUser(userId: string, token: string) {
+export async function getOrdersByUser(token: string) {
   try {
     const response = await fetch(`${apiUrl}/users/orders`, {
       method: "GET", 

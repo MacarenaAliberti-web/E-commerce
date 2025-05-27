@@ -35,9 +35,7 @@ const OrderHistory = () => {
       if (!userData) return
 
       setLoading(true)
-      const response = await getOrdersByUser(
-        String(userData.user.id),
-        String(userData.token)
+      const response = await getOrdersByUser(String(userData.token)
       )
 
       if (response) {
